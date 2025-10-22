@@ -1,1 +1,110 @@
+import React, { useState, useEffect } from "react";
 
+export default function TodoApp() {
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState("");
+  const [dateTime, setDateTime] = useState("");
+
+  const addTask = () => {
+    if (input.trim() && dateTime) {
+      const newTask = {
+        text: input,
+        time: dateTime,
+        completed: false,
+        id: Date.now(),
+      };
+      setTasks([...tasks, newTask]);
+      setInput("");
+      setDateTime("");
+    }
+  };
+
+  const deleteTask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => {
+          const reminderTime = new Date(task.time);
+          if (
+            !task.completed &&
+            reminderTime <= now &&
+            reminderTime > now - 60000
+          ) {
+            alert(`⏰ Reminder: ${task.text}`);
+            return { ...task, completed: true };
+          }
+          return task;
+        })
+      );
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-5 text-blue-700">
+          📝 To-Do List with Reminder
+        </h1>
+        <div className="flex flex-col gap-3 mb-5">
+          <input
+            type="text"
+            placeholder="Enter your task..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 focus:outline-none"
+          />
+          <input
+            type="datetime-local"
+            value={dateTime}
+            onChange={(e) => setDateTime(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 focus:outline-none"
+          />
+          <button
+            onClick={addTask}
+            className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          >
+            ➕ Add Task
+          </button>
+        </div>
+        {tasks.length === 0 ? (
+          <p className="text-gray-500 text-center">
+            No tasks yet! Add one above 👆
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                className="flex justify-between items-center bg-gray-50 border rounded-lg p-2"
+              >
+                <div>
+                  <p
+                    className={`font-medium ${
+                      task.completed ? "line-through text-gray-400" : ""
+                    }`}
+                  >
+                    {task.text}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    ⏰ {new Date(task.time).toLocaleString()}
+                  </p>
+                </div>
+                <button
+                  onClick={() => deleteTask(task.id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ❌
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
