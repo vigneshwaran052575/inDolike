@@ -1,1 +1,33 @@
+import React, { useState } from 'react';
+
+function QuotesGenerator() {
+  const quotes = [
+    "Believe you can and you're halfway there.",
+    "The only way to do great work is to love what you do.",
+    "A person is higher in hearts when higher in thinking.",
+    "D'not count.How Many pain's to make you Gentle.",
+    "Don't watch the clock; do what it does. Keep going."
+  ];
+
+  const [quote, setQuote] = useState('');
+
+  const generateQuote = () => {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    setQuote(quotes[randomIndex]);
+  };
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h2>🌟 Quotes Generator</h2>
+      <button onClick={generateQuote} style={{ padding: '10px 20px', fontSize: '16px' }}>
+        Get a Quote
+      </button>
+      <p style={{ marginTop: '30px', fontStyle: 'italic', fontSize: '18px' }}>
+        {quote}
+      </p>
+    </div>
+  );
+}
+
+export default QuotesGenerator;
 
